@@ -8,6 +8,8 @@ const form = document.querySelector('form');
 const amountInput = document.getElementById('amount');
 const currencySelect = document.getElementById('currency');
 const footer = document.querySelector('main footer');
+const description = document.getElementById('description');
+const result = document.getElementById('result');
 
 // Manipula o valor inserido no input
 amountInput.addEventListener('input', () => {
@@ -42,8 +44,26 @@ form.onsubmit = (event) => {
 // Função para converter a moeda
 function convertCurrency(amount, price, symbol) {
     try {
+
+        // Exibindo a cotação da moeda selecionada
+        description.textContent = `${symbol} 1 = ${formatCurrencyBRL(price)}`;
+
+        // Calculando o valor total da conversão
+        let total = amount * price;
+
+        if (isNaN(total)) {
+            throw new Error('Valor inválido para conversão');
+        }
+
+        // Fromatando o valor total para o padrão brasileiro
+        total = formatCurrencyBRL(total).replace('R$', ''); // Removendo o símbolo de Real para exibir apenas o valor
+
+        // Exibindo o resultado da conversão no footer
+        result.textContent = `${total} Reais`;
+
         // Aplica a classe que exibe o footer com o resultado
         footer.classList.add('show-result');
+
     } catch (error) {
         console.log(error);
 
@@ -53,3 +73,10 @@ function convertCurrency(amount, price, symbol) {
     }
 }
 
+// Formata a moeda para o padrão brasileiro
+function formatCurrencyBRL(value) {
+    return Number(value).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+}
